@@ -1,0 +1,19 @@
+# Ignorer les fichiers de modèles ou de données
+*.cifar
+data/cifar/
+cifar/
+
+# Ignorer les dossiers virtuels ou de dépendances
+__pycache__/
+*.py[cod]
+venv/
+.env
+
+# Ignorer les fichiers de logs
+*.log
+logs/
+
+# Ignorer les fichiers temporaires de l'OS ou de l'éditeur
+.DS_Store
+.idea/
+.vscode/

@@ -1,20 +1,13 @@
-import numpy as np
-import scipy as sp
-import matplotlib.pyplot as plt
-
 import torch
 import torch.nn as nn
-import torch.optim as optim
-
-from torchvision import datasets, transforms
-from torch.utils.data import DataLoader
-
 import torch.nn.functional as F
 
-cuda = torch.cuda.is_available()
+# Gestion du CPU sous MPS ou Cuda
+device = torch.device("mps" if torch.backends.mps.is_available() else ("cuda" if torch.cuda.is_available() else "cpu"))
+
 
 ##################################################
-# Classe pour définir le modèle
+# Class to define the model
 ##################################################
 class ConvModel(torch.nn.Module):
 
@@ -37,7 +30,7 @@ class ConvModel(torch.nn.Module):
     return x
 
 ##################################################
-# Classe pour définir le FGSM
+# Class to define FGSM
 ##################################################
 class FastGradientSignMethod:
 
@@ -48,8 +41,8 @@ class FastGradientSignMethod:
 
   def compute(self, x, y):
     """ Construct FGSM adversarial perturbation for examples x"""
-    if cuda:
-      x, y = x.cuda(), y.cuda()
+
+    x, y = x.to(device), y.to(device)
     perturbation = torch.zeros_like(x, requires_grad=True)
 
     adv = x + perturbation
@@ -64,7 +57,7 @@ class FastGradientSignMethod:
 
 
 ##################################################
-# Classe pour définir le PGD
+# Class to define PGD
 ##################################################
 class ProjectedGradientDescent:
 
@@ -82,7 +75,7 @@ class ProjectedGradientDescent:
 
     for _ in range(self.num_iter):
       # The following line caused the error. It has been replaced with the correct function call.
-      loss = criterion(self.model(x + delta), y)
+      loss = self.criterion(self.model(x + delta), y)
       loss.backward()
       delta.data = torch.clamp(delta + self.alpha * torch.sign(delta.grad.detach()), -self.eps, self.eps)
 
