@@ -5,7 +5,6 @@ import torch.nn.functional as F
 # Gestion du CPU sous MPS ou Cuda
 device = torch.device("mps" if torch.backends.mps.is_available() else ("cuda" if torch.cuda.is_available() else "cpu"))
 
-
 ##################################################
 # Class to define the model
 ##################################################
@@ -69,7 +68,7 @@ class ProjectedGradientDescent:
     self.criterion = nn.CrossEntropyLoss()
 
   def compute(self, x, y):
-    """ Construct PGD adversarial pertubration on the examples x."""
+    # Construct PGD adversarial perturbation on the examples x
     delta = torch.zeros_like(x, requires_grad=True)
     #delta.data = delta.data + torch.randn_like(delta) * 0.001
 
@@ -80,3 +79,31 @@ class ProjectedGradientDescent:
       delta.data = torch.clamp(delta + self.alpha * torch.sign(delta.grad.detach()), -self.eps, self.eps)
 
     return delta.data
+
+##################################################
+# Class to define PGD norm l2
+##################################################
+class ProjectedGradientDescent_l2:
+
+  def __init__(self, model, eps, alpha, num_iter):
+    self.model = model
+    self.eps = eps
+    self.alpha = alpha
+    self.num_iter = num_iter
+    self.criterion = nn.CrossEntropyLoss()
+
+  def compute(self, x, y):
+    # Construct PGD adversarial perturbation on the examples x
+    delta = torch.zeros_like(x, requires_grad=True)
+
+    for _ in range(self.num_iter):
+      loss = self.criterion(self.model(torch.clamp(x + delta, 0, 1)), y)
+      loss.backward()
+      delta.data = delta + self.alpha * delta.grad.detach()
+      mask = (torch.norm(delta.data, p=2, dim=(1, 2, 3)) <= self.eps).float()
+      delta.data = delta.data * mask.view(-1, 1, 1, 1)
+
+      delta.data += (1 - mask.view(-1, 1, 1, 1)) * delta.data / torch.norm(delta.data, p=2, dim=(1, 2, 3)).view(-1, 1, 1, 1) * self.eps
+      delta.grad.zero_()
+
+    return delta.detach()
