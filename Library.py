@@ -1,6 +1,7 @@
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 import pandas as pd
+import json
 #import matplotlib.pyplot as plt
 
 # A TESTER
@@ -11,6 +12,13 @@ import matplotlib.pyplot as plt
 # AMELIORATION
 #SORTIE DU CSV POUR NE PAS AVOIR DES TABLEAUX DANS LES CELLULES
 # GRAPHIQUE POUR CHAQUE MODELE : UN GRAPH ACC et UN GRAPH LOSS
+
+##################################################
+# Function to save results in a JSON file
+##################################################
+def save_results_to_json(results, file_path='results.json'):
+    with open(file_path, 'w') as f:
+        json.dump(results, f, indent=4)
 
 
 ##################################################
@@ -79,3 +87,19 @@ def visualize_results(df):
   # Display the figure
   plt.tight_layout()
   plt.show()
+
+##################################################
+# Function to read the json file
+##################################################
+def load_and_display_results_from_json(file_path='results.json'):
+
+  # Loading the results
+  with open(file_path, 'r') as f:
+    results = json.load(f)
+
+  # Display the results
+  for result in results:
+    print(f"Type d'entraînement: {result['type']}")
+    print(f"Train Losses: {result['train_losses']}")
+    print(f"Test Accuracies: {result['test_accuracies']}")
+    print("-" * 50)

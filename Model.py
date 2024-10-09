@@ -1,12 +1,13 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.nn.utils as utils
 
 # Gestion du CPU sous MPS ou Cuda
 device = torch.device("mps" if torch.backends.mps.is_available() else ("cuda" if torch.cuda.is_available() else "cpu"))
 
 ##################################################
-# Class to define the model
+# Class to define the classical model
 ##################################################
 class ConvModel(torch.nn.Module):
 
@@ -27,6 +28,45 @@ class ConvModel(torch.nn.Module):
     x = F.relu(self.fc2(x))
     x = self.fc3(x)
     return x
+
+##################################################
+# Class to define a Lipschitz constrained ConvModel
+##################################################
+class LipschitzConvModel(ConvModel):
+
+    def __init__(self, lipschitz_constant=1.0):
+        super(LipschitzConvModel, self).__init__()
+        self.lipschitz_constant = lipschitz_constant  # Le paramètre Lipschitz
+
+    def forward(self, x):
+        # Normalisation des poids pour chaque couche
+        self.conv1.weight.data = utils.clip_grad_norm_(self.conv1.weight, max_norm=self.lipschitz_constant)
+        self.conv2.weight.data = utils.clip_grad_norm_(self.conv2.weight, max_norm=self.lipschitz_constant)
+        self.fc1.weight.data = utils.clip_grad_norm_(self.fc1.weight, max_norm=self.lipschitz_constant)
+        self.fc2.weight.data = utils.clip_grad_norm_(self.fc2.weight, max_norm=self.lipschitz_constant)
+        self.fc3.weight.data = utils.clip_grad_norm_(self.fc3.weight, max_norm=self.lipschitz_constant)
+
+        # Forward pass normal
+        return super(LipschitzConvModel, self).forward(x)
+
+##################################################
+# Class to define a Randomized ConvModel
+##################################################
+class RandomizedConvModel(ConvModel):
+
+    def __init__(self, noise_std=0.1):
+        super(RandomizedConvModel, self).__init__()
+        self.noise_std = noise_std  # Écart type du bruit
+
+    def forward(self, x):
+        # Ajouter du bruit gaussien aux activations
+        x = self.pool(F.relu(self.conv1(x) + torch.randn_like(x) * self.noise_std))
+        x = self.pool(F.relu(self.conv2(x) + torch.randn_like(x) * self.noise_std))
+        x = x.view(-1, 100 * 8 * 8)
+        x = F.relu(self.fc1(x) + torch.randn_like(x) * self.noise_std)
+        x = F.relu(self.fc2(x) + torch.randn_like(x) * self.noise_std)
+        x = self.fc3(x)
+        return x
 
 ##################################################
 # Class to define FGSM
@@ -70,10 +110,8 @@ class ProjectedGradientDescent:
   def compute(self, x, y):
     # Construct PGD adversarial perturbation on the examples x
     delta = torch.zeros_like(x, requires_grad=True)
-    #delta.data = delta.data + torch.randn_like(delta) * 0.001
 
     for _ in range(self.num_iter):
-      # The following line caused the error. It has been replaced with the correct function call.
       loss = self.criterion(self.model(x + delta), y)
       loss.backward()
       delta.data = torch.clamp(delta + self.alpha * torch.sign(delta.grad.detach()), -self.eps, self.eps)
@@ -107,3 +145,35 @@ class ProjectedGradientDescent_l2:
       delta.grad.zero_()
 
     return delta.detach()
+
+##################################################
+# Class to define CarliniWagnerL2
+##################################################
+
+class CarliniWagnerL2:
+
+    def __init__(self, model, eps, alpha, num_iter):
+        self.model = model
+        self.eps = eps
+        self.alpha = alpha
+        self.num_iter = num_iter
+        self.criterion = nn.CrossEntropyLoss()
+
+    def compute(self, x, y):
+        # Construct CarliniWagnerL2 adversarial perturbation on the examples x
+        delta = torch.zeros_like(x, requires_grad=True)
+
+        for _ in range(self.num_iter):
+            delta.requires_grad = True
+            output = self.model(x + delta)
+            loss = self.criterion(output, y)
+            loss.backward()
+
+            grad = delta.grad.detach()
+            grad_norm = torch.norm(grad.view(grad.size(0), -1), p=2, dim=1).view(-1, 1, 1, 1)
+            delta.data += self.alpha * grad / grad_norm
+            delta.data = torch.min(torch.max(delta.detach(), -x), 1 - x) # Projection onto the l2 ball
+            delta.data = torch.clamp(delta.detach(), -self.eps, self.eps) # Projection onto the l2 ball
+            delta.grad.zero_()
+
+        return delta.detach()
