@@ -1,0 +1,6 @@
+yaml~=0.2.5
+pyyaml~=6.0.1
+torch~=2.6.0.dev20241003
+pandas~=2.2.1
+matplotlib~=3.8.4
+torchvision~=0.20.0.dev20241003
