@@ -3,6 +3,7 @@ model:
   learning_rate: 0.05  # Learning rate
   batch_size: 100  # size of the batch
   n_epochs: 2  # Number of epochs to train
+  noise_percentage: 0.1  # Percentage of noise to add to the data if 0.0 no noise is added
 
 adversarial_training:
   alpha: 0.01  # Alpha value for PGD

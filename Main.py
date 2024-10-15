@@ -45,18 +45,15 @@ def main():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=config['model']['learning_rate'])
     batch_size = config['model']['batch_size']
-    train_loader = Library.load_cifar('train', batch_size)
-    test_loader = Library.load_cifar('test', batch_size)
+    noise_percentage = config['model']['noise_percentage']
+    train_loader = Library.load_cifar('train', batch_size, noise_percentage)
+    test_loader = Library.load_cifar('test', batch_size, noise_percentage)
 
     # Run experiments and collect results
     results, execution_times = run_experiments(config, model, criterion, optimizer, train_loader, test_loader)
 
     # Save results to JSON
     Library.save_results_to_json(results)
-
-    # Create a dataframe and save as CSV
-    #df = Library.results_to_dataframe(results)
-    #df.to_csv('results.csv', index=False)
 
     # Visualize results
     df = Library.load_and_display_results_from_json('results.json')
