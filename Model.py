@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+import torch.nn.functional as f
 import torch.nn.utils as utils
 
 # Gestion du CPU sous MPS ou Cuda
@@ -21,11 +21,11 @@ class ConvModel(torch.nn.Module):
     self.fc3 = nn.Linear(84, 10) # 84 input features, 10 output features
 
   def forward(self, x): # Define the forward pass
-    x = self.pool(F.relu(self.conv1(x)))
-    x = self.pool(F.relu(self.conv2(x)))
+    x = self.pool(f.relu(self.conv1(x)))
+    x = self.pool(f.relu(self.conv2(x)))
     x = x.view(-1, 100 * 8 * 8)
-    x = F.relu(self.fc1(x))
-    x = F.relu(self.fc2(x))
+    x = f.relu(self.fc1(x))
+    x = f.relu(self.fc2(x))
     x = self.fc3(x)
     return x
 
@@ -36,10 +36,10 @@ class LipschitzConvModel(ConvModel):
 
     def __init__(self, lipschitz_constant=1.0):
         super(LipschitzConvModel, self).__init__()
-        self.lipschitz_constant = lipschitz_constant  # Le paramètre Lipschitz
+        self.lipschitz_constant = lipschitz_constant  # Lipschitz parameter
 
     def forward(self, x):
-        # Normalisation des poids pour chaque couche
+        # Normalization of the weights for each layer
         self.conv1.weight.data = utils.clip_grad_norm_(self.conv1.weight, max_norm=self.lipschitz_constant)
         self.conv2.weight.data = utils.clip_grad_norm_(self.conv2.weight, max_norm=self.lipschitz_constant)
         self.fc1.weight.data = utils.clip_grad_norm_(self.fc1.weight, max_norm=self.lipschitz_constant)
@@ -59,12 +59,12 @@ class RandomizedConvModel(ConvModel):
         self.noise_std = noise_std  # Écart type du bruit
 
     def forward(self, x):
-        # Ajouter du bruit gaussien aux activations
-        x = self.pool(F.relu(self.conv1(x) + torch.randn_like(x) * self.noise_std))
-        x = self.pool(F.relu(self.conv2(x) + torch.randn_like(x) * self.noise_std))
+        # Adding Gaussian noise to the activations
+        x = self.pool(f.relu(self.conv1(x) + torch.randn_like(x) * self.noise_std))
+        x = self.pool(f.relu(self.conv2(x) + torch.randn_like(x) * self.noise_std))
         x = x.view(-1, 100 * 8 * 8)
-        x = F.relu(self.fc1(x) + torch.randn_like(x) * self.noise_std)
-        x = F.relu(self.fc2(x) + torch.randn_like(x) * self.noise_std)
+        x = f.relu(self.fc1(x) + torch.randn_like(x) * self.noise_std)
+        x = f.relu(self.fc2(x) + torch.randn_like(x) * self.noise_std)
         x = self.fc3(x)
         return x
 
@@ -90,7 +90,7 @@ class FastGradientSignMethod:
     loss = self.criterion(output, y)
     loss.backward()
     delta = self.eps * torch.sign(perturbation.grad.detach())
-    delta = torch.clamp(delta, -self.eps, self.eps) #en norme infini on veut pas que les perturbation soit au dessus de epsilon, dans le carré on revient dans l'espace quand on en sort
+    delta = torch.clamp(delta, -self.eps, self.eps) # With infinity norm we don't want the perturbation to be above epsilon, in the square we come back in the space when we leave it
 
     return delta
 
@@ -149,7 +149,6 @@ class ProjectedGradientDescent_l2:
 ##################################################
 # Class to define CarliniWagnerL2
 ##################################################
-
 class CarliniWagnerL2:
 
     def __init__(self, model, eps, alpha, num_iter):

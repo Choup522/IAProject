@@ -1,40 +1,40 @@
 model:
   type: classic  # options: classic, lipschitz, randomized
-  learning_rate: 0.05  # Taux d'apprentissage
-  batch_size: 100  # Taille du batch
-  n_epochs: 2  # Nombre d'époques d'entraînement
+  learning_rate: 0.05  # Learning rate
+  batch_size: 100  # size of the batch
+  n_epochs: 2  # Number of epochs to train
 
 adversarial_training:
-  alpha: 0.01  # Valeur d'alpha pour PGD
-  num_iter: 15  # Nombre d'itérations pour PGD
-  epsilons:  # Liste des valeurs epsilon à tester
+  alpha: 0.01  # Alpha value for PGD
+  num_iter: 15  # Number of iterations for PGD
+  epsilons:  # List of epsilon values to test
     - 0.02
     - 0.04
     - 0.06
 
 attacks:
-  - type: normal  # Entraînement normal sans attaque
+  - type: normal  # Normal training without attack
   - type: pgd
     attack_class: ProjectedGradientDescent
-    epsilons:  # Valeurs d'epsilon spécifiques pour PGD
+    epsilons:  # epsilons values for PGD
       - 0.02
       - 0.04
       - 0.06
   - type: pgd_l2
     attack_class: ProjectedGradientDescent_l2
-    epsilons:  # Valeurs d'epsilon spécifiques pour PGD l2
+    epsilons:  # epsilons values for PGD  l2
       - 0.02
       - 0.04
       - 0.06
   - type: fgsm
     attack_class: FastGradientSignMethod
-    epsilons:  # Valeurs d'epsilon spécifiques pour FGSM
+    epsilons:  # epsilons values for FGSM
       - 0.02
       - 0.04
       - 0.06
   - type: cw_l2
     attack_class: CarliniWagnerL2
-    epsilons: # Valeurs d'epsilon spécifiques pour CarliniWagnerL2
+    epsilons: # epsilons values for CarliniWagnerL2
       - 0.02
       - 0.04
       - 0.06

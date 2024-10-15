@@ -2,16 +2,12 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 import pandas as pd
 import json
-#import matplotlib.pyplot as plt
-
-# A TESTER
-import matplotlib
-matplotlib.use('TkAgg')  # Utilise TkAgg comme backend pour éviter les messages IMK
 import matplotlib.pyplot as plt
 
-# AMELIORATION
-#SORTIE DU CSV POUR NE PAS AVOIR DES TABLEAUX DANS LES CELLULES
-# GRAPHIQUE POUR CHAQUE MODELE : UN GRAPH ACC et UN GRAPH LOSS
+# A TESTER
+#import matplotlib
+#//matplotlib.use('TkAgg')  # Utilise TkAgg comme backend pour éviter les messages IMK
+#import matplotlib.pyplot as plt
 
 ##################################################
 # Function to save results in a JSON file
@@ -35,7 +31,7 @@ def load_cifar(split, batch_size):
 
 
 ##################################################
-# Function to create dataframe from results list
+# Function to create dataframe from results list PAS UTILISER
 ##################################################
 def results_to_dataframe(results_list):
 
@@ -97,9 +93,22 @@ def load_and_display_results_from_json(file_path='results.json'):
   with open(file_path, 'r') as f:
     results = json.load(f)
 
+  # Initialize lists to store the data
+  types = []
+  train_losses = []
+  test_accuracies = []
+
   # Display the results
   for result in results:
-    print(f"Type d'entraînement: {result['type']}")
-    print(f"Train Losses: {result['train_losses']}")
-    print(f"Test Accuracies: {result['test_accuracies']}")
-    print("-" * 50)
+    types.append(result['type'])
+    train_losses.append(result['train_losses'])
+    test_accuracies.append(result['test_accuracies'])
+
+  # Create a DataFrame from the extracted data
+  df = pd.DataFrame({
+    'Type': types,
+    'Train Losses': train_losses,
+    'Test Accuracies': test_accuracies
+  })
+
+  return df
