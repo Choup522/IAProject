@@ -1,4 +1,7 @@
 import torch
+import Model
+import Library
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
 
 ##################################################
 # Class to define the training
@@ -19,18 +22,18 @@ class Training:
         self.train_losses = []
         self.test_accuracies = []
 
-        # Vérifie si MPS est disponible, sinon utilise le CPU
+        # check if MPS is available, otherwise use CPU
         if torch.backends.mps.is_available():
             self.device = torch.device('mps')
             self.model.to(self.device)
-            print("Utilisation du GPU M1 avec MPS")
+            print("GPU M with MPS")
         elif torch.cuda.is_available():
             self.device = torch.device('cuda')
             self.model.to(self.device)
-            print("Utilisation du GPU avec CUDA")
+            print("GPU with CUDA")
         else:
             self.device = torch.device('cpu')
-            print("Exécution sur le CPU")
+            print("CPU, Good luck!")
 
     # Function to train the model
     def adversarial_train_model(self):
@@ -38,6 +41,8 @@ class Training:
         for epoch in range(1, self.n_epochs + 1):
 
             valid_loss = 0.0
+            total_correct = 0.0  # Cumulative number of correct predictions
+            n_inputs = 0.0  # Cumulative number of inputs
 
             # Training loop
             for n_batch, (imgs, labels) in enumerate(self.train_loader):
@@ -55,14 +60,26 @@ class Training:
 
                 loss = self.criterion(output, labels)
                 loss.backward()
+
+                # Clip gradients only for the Lipschitz model
+                if isinstance(self.model, Model.LipschitzConvModel):
+                    torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=self.model.lipschitz_constant)
+
                 self.optimizer.step()
 
                 valid_loss += loss.item() * imgs.size(0)
 
+                # Calculate accuracy during training
+                _, predicted = torch.max(output.data, 1)
+                total_correct += predicted.eq(labels.data).sum().item()
+                n_inputs += imgs.size(0)
+
             # Calculate the loss for the epoch
             avg_loss = valid_loss / len(self.train_loader.dataset)
+            accuracy = total_correct / n_inputs
             self.train_losses.append(avg_loss)
-            print(f"Epoch: {epoch}, Loss: {avg_loss:.4f}")
+            self.test_accuracies.append(accuracy)
+            print(f"Epoch: {epoch}, Loss: {avg_loss:.4f}, Accuracy: {accuracy:.4f}")
 
     # Function to evaluate the model
     def eval_model(self, loader=None):
@@ -70,8 +87,8 @@ class Training:
         if loader is None:
             loader = self.test_loader
 
-        accuracy = 0.
-        n_inputs = 0.
+        all_labels = []
+        all_predictions = []
 
         # Evaluation loop
         for n_batch, (imgs, labels) in enumerate(loader):
@@ -85,10 +102,18 @@ class Training:
                 outputs = self.model(torch.clamp(adv, 0, 1))
 
             _, predicted = torch.max(outputs.data, 1)
-            accuracy += predicted.eq(labels.data).cpu().sum().numpy()
-            n_inputs += imgs.shape[0]
 
-        accuracy /= n_inputs
+            # Collect predictions and true labels for metrics
+            all_predictions.extend(predicted.cpu().numpy())
+            all_labels.extend(labels.cpu().numpy())
+
+        # Calculate accuracy, precision, recall, and F1 score using scikit-learn
+        accuracy = accuracy_score(all_labels, all_predictions)
+        precision = precision_score(all_labels, all_predictions, average='weighted',  zero_division=0)
+        recall = recall_score(all_labels, all_predictions, average='weighted')
+        f1 = f1_score(all_labels, all_predictions, average='weighted')
+
+        # Append the accuracy to the accuracy list
         self.test_accuracies.append(accuracy)
 
         if self.attack is None:
@@ -96,3 +121,15 @@ class Training:
         else:
             print(f'Accuracy on test set with attack: {accuracy:.4f}')
 
+        print(f'Precision: {precision:.4f}, Recall: {recall:.4f}, F1 Score: {f1:.4f}')
+
+        # Save results to JSON file
+        results = {
+            'accuracy': accuracy,
+            'precision': precision,
+            'recall': recall,
+            'f1_score': f1
+        }
+
+        # Save the results to a JSON file
+        Library.save_results_to_json(results, './outputs/evaluation_results.json')

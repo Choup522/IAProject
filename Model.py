@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as f
-import torch.nn.utils as utils
 
 # Gestion du CPU sous MPS ou Cuda
 device = torch.device("mps" if torch.backends.mps.is_available() else ("cuda" if torch.cuda.is_available() else "cpu"))
@@ -39,13 +38,6 @@ class LipschitzConvModel(ConvModel):
         self.lipschitz_constant = lipschitz_constant  # Lipschitz parameter
 
     def forward(self, x):
-        # Normalization of the weights for each layer
-        self.conv1.weight.data = utils.clip_grad_norm_(self.conv1.weight, max_norm=self.lipschitz_constant)
-        self.conv2.weight.data = utils.clip_grad_norm_(self.conv2.weight, max_norm=self.lipschitz_constant)
-        self.fc1.weight.data = utils.clip_grad_norm_(self.fc1.weight, max_norm=self.lipschitz_constant)
-        self.fc2.weight.data = utils.clip_grad_norm_(self.fc2.weight, max_norm=self.lipschitz_constant)
-        self.fc3.weight.data = utils.clip_grad_norm_(self.fc3.weight, max_norm=self.lipschitz_constant)
-
         # Forward pass normal
         return super(LipschitzConvModel, self).forward(x)
 
@@ -59,13 +51,21 @@ class RandomizedConvModel(ConvModel):
         self.noise_std = noise_std  # Écart type du bruit
 
     def forward(self, x):
-        # Adding Gaussian noise to the activations
-        x = self.pool(f.relu(self.conv1(x) + torch.randn_like(x) * self.noise_std))
-        x = self.pool(f.relu(self.conv2(x) + torch.randn_like(x) * self.noise_std))
+        # Apply the convolution layers first, then add noise to the output
+        x = self.pool(f.relu(self.conv1(x)))  # Convolution first
+        x = x + torch.randn_like(x) * self.noise_std  # Add noise after the convolution
+
+        x = self.pool(f.relu(self.conv2(x)))  # Second convolution
+        x = x + torch.randn_like(x) * self.noise_std  # Add noise after the second convolution
+
         x = x.view(-1, 100 * 8 * 8)
-        x = f.relu(self.fc1(x) + torch.randn_like(x) * self.noise_std)
-        x = f.relu(self.fc2(x) + torch.randn_like(x) * self.noise_std)
-        x = self.fc3(x)
+        x = f.relu(self.fc1(x))
+        x = x + torch.randn_like(x) * self.noise_std  # Add noise after the fully connected layer
+
+        x = f.relu(self.fc2(x))
+        x = x + torch.randn_like(x) * self.noise_std  # Add noise after the second fully connected layer
+
+        x = self.fc3(x)  # Output layer, no noise added here
         return x
 
 ##################################################

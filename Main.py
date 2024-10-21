@@ -5,6 +5,14 @@ import yaml
 import torch.nn as nn
 import torch.optim as optim
 import time
+import argparse
+
+##################################################
+# Code to launch the different types of attacks
+# To train without any attacks:  python Main.py --attack none
+# To train with only PGD attacks: python Main.py --attack pgd
+# To train with all attacks: python Main.py --attack all
+##################################################
 
 ##################################################
 # Load configuration file
@@ -35,6 +43,11 @@ def get_model_from_config(config):
 ##################################################
 def main():
 
+    # Parse arguments
+    parser = argparse.ArgumentParser(description="Run specified experiments")
+    parser.add_argument('--attack', type=str, default='all', help='Path to configuration file')
+    args = parser.parse_args()
+
     # Load configuration
     config = load_config()
 
@@ -50,13 +63,14 @@ def main():
     test_loader = Library.load_cifar('test', batch_size, noise_percentage)
 
     # Run experiments and collect results
-    results, execution_times = run_experiments(config, model, criterion, optimizer, train_loader, test_loader)
+    results, execution_times = run_experiments(config, model, criterion, optimizer, train_loader, test_loader, args.attack)
 
     # Save results to JSON
     Library.save_results_to_json(results)
 
     # Visualize results
-    df = Library.load_and_display_results_from_json('results.json')
+    df = Library.load_and_display_results_from_json('./outputs/results.json')
+    Library.formatdataframe(df)
     Library.visualize_results(df)
 
 ##################################################
@@ -77,12 +91,12 @@ def train_model(attack, model, criterion, optimizer, train_loader, test_loader, 
 ##################################################
 # Function to run experiments
 ##################################################
-def run_experiments(config, model, criterion, optimizer, train_loader, test_loader):
+def run_experiments(config, model, criterion, optimizer, train_loader, test_loader, attack_type):
     results = []
     execution_times = {}
 
     # Normal training
-    if 'normal' in [attack['type'] for attack in config['attacks']]:
+    if attack_type in ['none', 'all']:
         start_time = time.time()
         results.append(train_model(None, model, criterion, optimizer, train_loader, test_loader, config['model']['n_epochs'], 'normal'))
         end_time = time.time()
@@ -90,15 +104,27 @@ def run_experiments(config, model, criterion, optimizer, train_loader, test_load
 
     # Loop through the attack configurations
     for attack_conf in config['attacks']:
-        if attack_conf['type'] != 'normal':
+
+        # Check if the attack type matches the requested type or if we should run all
+        if attack_conf['type'] != 'normal' and (attack_type == 'all' or attack_conf['type'] == attack_type):
             attack_class = getattr(Model, attack_conf['attack_class'])
+
             for eps in attack_conf['epsilons']:
                 attack_name = f"{attack_conf['type']}_eps_{eps}"
+
+                # Initialize alpha and num_iter values for the current attack
+                alpha = attack_conf.get('alpha', config['adversarial_training']['alpha'])
+                num_iter = attack_conf.get('num_iter', config['adversarial_training']['num_iter'])
+
                 # Handle attack initialization based on the type
                 if attack_conf['type'] == 'fgsm':
-                    attack = attack_class(model, eps)  # FGSM doesn't need alpha or num_iter
+                    attack = attack_class(model, eps)
+                elif attack_conf['type'] in ['pgd', 'pgd_l2']:
+                    attack = attack_class(model, eps, alpha, num_iter)
+                elif attack_conf['type'] == 'cw_l2':
+                    attack = attack_class(model, eps, alpha, num_iter)
                 else:
-                    attack = attack_class(model, eps, config['adversarial_training']['alpha'], config['adversarial_training']['num_iter'])
+                    raise ValueError(f"Type of attack not supported : {attack_conf['type']}")
 
                 start_time = time.time()
                 results.append(train_model(attack, model, criterion, optimizer, train_loader, test_loader, config['model']['n_epochs'], f"{attack_conf['type']}_eps_{eps}"))
@@ -106,7 +132,7 @@ def run_experiments(config, model, criterion, optimizer, train_loader, test_load
                 execution_times[attack_name] = end_time - start_time
 
     # Export execution times to JSON file
-    Library.save_results_to_json(execution_times, 'execution_times.json')
+    Library.save_results_to_json(execution_times, './outputs/execution_times.json')
 
     return results, execution_times
 

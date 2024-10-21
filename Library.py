@@ -6,7 +6,6 @@ import numpy as np
 import json
 import matplotlib.pyplot as plt
 
-
 ##################################################
 # Custom Dataset to add noise to a percentage of images
 ##################################################
@@ -57,13 +56,13 @@ def load_cifar(split, batch_size, noise_percentage=0, noise_std=0.1):
 ##################################################
 # Function to save results in a JSON file
 ##################################################
-def save_results_to_json(results, file_path='results.json'):
+def save_results_to_json(results, file_path='./outputs/results.json'):
     with open(file_path, 'w') as f:
         json.dump(results, f, indent=4)
 
 
 ##################################################
-# Function to display the results
+# Function to display the results on graph
 ##################################################
 def visualize_results(df):
   # size of the figure
@@ -94,7 +93,7 @@ def visualize_results(df):
 ##################################################
 # Function to read the json file
 ##################################################
-def load_and_display_results_from_json(file_path='results.json'):
+def load_and_display_results_from_json(file_path='./outputs/results.json'):
 
   # Loading the results
   with open(file_path, 'r') as f:
@@ -119,3 +118,11 @@ def load_and_display_results_from_json(file_path='results.json'):
   })
 
   return df
+
+##################################################
+# Function to format the DataFrame
+##################################################
+def formatdataframe(df):
+    df_exploded = df.explode("Train Losses").explode("Test Accuracies").reset_index(drop=True)
+    df_exploded.to_csv('./outputs/results.csv', index=False)
+    return df_exploded
