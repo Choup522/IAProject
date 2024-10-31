@@ -17,12 +17,12 @@ attacks:
   - type: normal  # Normal training without attack
   - type: pgd
     attack_class: ProjectedGradientDescent
-    alpha: 0.02  # Alpha value for PGD
-    num_iter: 30  # Number of iterations for PGD
+    alpha: 0.002  # Alpha value for PGD
+    num_iter: 10  # Number of iterations for PGD
     epsilons:  # epsilons values for PGD
-      - 0.02
-      - 0.04
-      - 0.06
+      - 0.1
+      - 0.2
+      - 0.4
   - type: pgd_l2
     attack_class: ProjectedGradientDescent_l2
     alpha: 0.005  # A smaller alpha for L2 attacks 0.005

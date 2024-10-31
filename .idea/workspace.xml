@@ -5,16 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c4fbe487-f8c2-4da5-9e76-27a2376c2fd9" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/IAProject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/IAProject.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Library.py" beforeDir="false" afterPath="$PROJECT_DIR$/Library.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/Model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Training.py" beforeDir="false" afterPath="$PROJECT_DIR$/Training.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/execution_times.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/results.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/evaluation_results.json" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/evaluation_results.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +81,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-0e3be3396995-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23339.19" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-PY-242.23726.102" />
+        <option value="bundled-python-sdk-5e1850174b45-399fe30bd8c1-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-242.23726.102" />
       </set>
     </attachedChunks>
   </component>
@@ -104,6 +99,8 @@
       <workItem from="1728922330468" duration="8939000" />
       <workItem from="1728977524373" duration="19260000" />
       <workItem from="1729081541315" duration="2741000" />
+      <workItem from="1730284537808" duration="6515000" />
+      <workItem from="1730297726835" duration="9364000" />
     </task>
     <servers />
   </component>

@@ -109,12 +109,16 @@ class ProjectedGradientDescent:
 
   def compute(self, x, y):
     # Construct PGD adversarial perturbation on the examples x
+    x, y = x.to(device), y.to(device)
     delta = torch.zeros_like(x, requires_grad=True)
 
     for _ in range(self.num_iter):
-      loss = self.criterion(self.model(x + delta), y)
-      loss.backward()
-      delta.data = torch.clamp(delta + self.alpha * torch.sign(delta.grad.detach()), -self.eps, self.eps)
+        adv = x + delta
+        output = self.model(adv)
+        loss = self.criterion(output, y)
+        loss.backward()
+        delta.data = torch.clamp(delta + self.alpha * torch.sign(delta.grad.detach()), -self.eps, self.eps)
+        delta.grad.zero_()
 
     return delta.data
 
@@ -135,14 +139,11 @@ class ProjectedGradientDescent_l2:
     delta = torch.zeros_like(x, requires_grad=True)
 
     for _ in range(self.num_iter):
-      loss = self.criterion(self.model(torch.clamp(x + delta, 0, 1)), y)
-      loss.backward()
-      delta.data = delta + self.alpha * delta.grad.detach()
-      mask = (torch.norm(delta.data, p=2, dim=(1, 2, 3)) <= self.eps).float()
-      delta.data = delta.data * mask.view(-1, 1, 1, 1)
-
-      delta.data += (1 - mask.view(-1, 1, 1, 1)) * delta.data / torch.norm(delta.data, p=2, dim=(1, 2, 3)).view(-1, 1, 1, 1) * self.eps
-      delta.grad.zero_()
+        adv = x + delta
+        output = self.model(adv)
+        loss = self.criterion(output, y)
+        loss.backward()
+        delta.data = torch.renorm(delta +self.alpha * torch.sign(delta.grad.detach()),2,0, self.eps)
 
     return delta.detach()
 
