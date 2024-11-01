@@ -1,6 +1,6 @@
 # Ignorer les fichiers de modèles ou de données
 *.cifar
-data/cifar/
+docs/cifar/
 cifar/
 
 # Ignorer les dossiers virtuels ou de dépendances

@@ -1,0 +1,4 @@
+Type,Test Accuracies,Test Precision,Test Recall,Test F1 Scores
+pgd_eps_0.1,0.1,0.01,0.1,0.01818181818181818
+pgd_eps_0.2,0.1,0.01,0.1,0.01818181818181818
+pgd_eps_0.4,0.1,0.01,0.1,0.01818181818181818

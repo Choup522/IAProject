@@ -80,8 +80,8 @@ def visualize_results(df):
   # graph of test accuracies (test accuracies)
   plt.subplot(1, 2, 2)
   for i in range(len(df)):
-    plt.plot(df['Test Accuracies'].iloc[i], label=df['Type'].iloc[i])
-  plt.title('Test Accuracies')
+    plt.plot(df['Train Accuracies'].iloc[i], label=df['Type'].iloc[i])
+  plt.title('Train Accuracies')
   plt.xlabel('Epoch')
   plt.ylabel('Accuracy')
   plt.legend()
@@ -99,30 +99,54 @@ def load_and_display_results_from_json(file_path='./outputs/results.json'):
   with open(file_path, 'r') as f:
     results = json.load(f)
 
-  # Initialize lists to store the data
-  types = []
-  train_losses = []
-  test_accuracies = []
+    # Initialize lists to store the data
+    types = []
+    train_losses = []
+    train_accuracies = []
+    test_accuracies = []
+    test_precision = []
+    test_recall = []
+    test_f1_scores = []
 
-  # Display the results
-  for result in results:
-    types.append(result['type'])
-    train_losses.append(result['train_losses'])
-    test_accuracies.append(result['test_accuracies'])
+    # Display the results
+    for result in results:
+        types.append(result['type'])
+        train_losses.append(result['train_losses'])
+        train_accuracies.append(result['train_accuracies'])
+        test_accuracies.append(result['test_accuracies'])
+        test_precision.append(result['test_precisions'])
+        test_recall.append(result['test_recall'])
+        test_f1_scores.append(result['test_f1_scores'])
 
-  # Create a DataFrame from the extracted data
-  df = pd.DataFrame({
-    'Type': types,
-    'Train Losses': train_losses,
-    'Test Accuracies': test_accuracies
-  })
+    # Create a DataFrame from the extracted data
+    df_train = pd.DataFrame({
+        'Type': types,
+        'Train Losses': train_losses,
+        'Train Accuracies': train_accuracies,
+    })
 
-  return df
+    df_test = pd.DataFrame({
+        'Type': types,
+        'Test Accuracies': test_accuracies,
+        'Test Precision': test_precision,
+        'Test Recall': test_recall,
+        'Test F1 Scores': test_f1_scores
+    })
+
+    return df_train, df_test
 
 ##################################################
 # Function to format the DataFrame
 ##################################################
-def formatdataframe(df):
-    df_exploded = df.explode("Train Losses").explode("Test Accuracies").reset_index(drop=True)
-    df_exploded.to_csv('./outputs/results.csv', index=False)
+def formatdataframe(df, path='./outputs/results.csv'):
+
+    # Explode the columns that contain lists
+    columns_to_explode = [col for col in df.columns if isinstance(df[col].iloc[0], list)]
+    df_exploded = df.copy()
+
+    for col in columns_to_explode:
+        df_exploded = df_exploded.explode(col).reset_index(drop=True)
+
+    # Save the exploded DataFrame to a CSV file
+    df_exploded.to_csv(path, index=False)
     return df_exploded
