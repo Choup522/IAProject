@@ -5,17 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c4fbe487-f8c2-4da5-9e76-27a2376c2fd9" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Library.py" beforeDir="false" afterPath="$PROJECT_DIR$/Library.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Training.py" beforeDir="false" afterPath="$PROJECT_DIR$/Training.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/evaluation_results.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/execution_times.json" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/execution_times.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/results.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/results.json" beforeDir="false" afterPath="$PROJECT_DIR$/outputs/results.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/execution_times.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/results.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/results_test.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/results_train.csv" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,7 +104,8 @@
       <workItem from="1728977524373" duration="19260000" />
       <workItem from="1729081541315" duration="2741000" />
       <workItem from="1730284537808" duration="6515000" />
-      <workItem from="1730297726835" duration="26241000" />
+      <workItem from="1730297726835" duration="26331000" />
+      <workItem from="1730641464456" duration="37199000" />
     </task>
     <servers />
   </component>

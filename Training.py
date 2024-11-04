@@ -23,6 +23,7 @@ class Training:
 
         # Variables to store metrics on the test set
         self.test_accuracies = []
+        self.test_accuracies_like_train = []
         self.test_precisions = []
         self.test_recalls = []
         self.test_f1_scores = []
@@ -92,6 +93,8 @@ class Training:
         if loader is None:
             loader = self.test_loader
 
+        total_correct = 0
+        total_images = 0
         all_labels = []
         all_predictions = []
 
@@ -109,9 +112,12 @@ class Training:
             _, predicted = torch.max(outputs.data, 1)
 
             # Collect predictions and true labels for metrics
+            total_correct += predicted.eq(labels.data).sum().item()
+            total_images += imgs.size(0)
             all_predictions.extend(predicted.cpu().numpy())
             all_labels.extend(labels.cpu().numpy())
 
+        accuracy_train_like = total_correct / total_images
         # Calculate accuracy, precision, recall, and F1 score using scikit-learn
         accuracy = accuracy_score(all_labels, all_predictions)
         precision = precision_score(all_labels, all_predictions, average='weighted',  zero_division=0)
@@ -119,14 +125,15 @@ class Training:
         f1 = f1_score(all_labels, all_predictions, average='weighted')
 
         # Append the accuracy to the accuracy list
+        self.test_accuracies_like_train.append(accuracy_train_like)
         self.test_accuracies.append(accuracy)
         self.test_recalls.append(recall)
         self.test_precisions.append(precision)
         self.test_f1_scores.append(f1)
 
         if self.attack is None:
-            print(f'Accuracy on test set: {accuracy:.4f}')
+            print(f'Accuracy on test set: {accuracy:.4f} , (train-like: {accuracy_train_like:.4f})')
         else:
-            print(f'Accuracy on test set with attack: {accuracy:.4f}')
+            print(f'Accuracy on test set with attack: {accuracy:.4f}, (train-like: {accuracy_train_like:.4f})')
 
         print(f'Precision: {precision:.4f}, Recall: {recall:.4f}, F1 Score: {f1:.4f}')

@@ -70,8 +70,8 @@ def main():
 
     # Visualize results
     df_train, df_test = Library.load_and_display_results_from_json('./outputs/results.json')
-    Library.formatdataframe(df_train, "./outputs/results_train.csv'")
-    Library.formatdataframe(df_test, "./outputs/results_test.csv'")
+    Library.formatdataframe(df_train, "./outputs/results_train.csv")
+    Library.formatdataframe(df_test, "./outputs/results_test.csv")
     Library.visualize_results(df_train)
 
 ##################################################
@@ -88,6 +88,7 @@ def train_model(attack, model, criterion, optimizer, train_loader, test_loader, 
         'train_losses': trainer.train_losses,
         'train_accuracies': trainer.train_accuracies,
         'test_accuracies': trainer.test_accuracies,
+        'test_accuracies_like_train' : trainer.test_accuracies_like_train,
         'test_precisions': trainer.test_precisions,
         'test_recall': trainer.test_recalls,
         'test_f1_scores': trainer.test_f1_scores

@@ -2,7 +2,7 @@ model:
   type: classic  # options: classic, lipschitz, randomized
   learning_rate: 0.05 # Learning rate 0.05
   batch_size: 100  # size of the batch
-  n_epochs: 2  # Number of epochs to train 40
+  n_epochs: 40  # Number of epochs to train
   noise_percentage: 0.0  # Percentage of noise to add to the data if 0.0 no noise is added
 
 adversarial_training:
