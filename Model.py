@@ -152,11 +152,12 @@ class ProjectedGradientDescent_l2:
 ##################################################
 class CarliniWagnerL2:
 
-    def __init__(self, model, eps, alpha, num_iter):
+    def __init__(self, model, eps, alpha, num_iter, c=0.1):
         self.model = model
         self.eps = eps
         self.alpha = alpha
         self.num_iter = num_iter
+        self.c = c
         self.criterion = nn.CrossEntropyLoss()
 
     def compute(self, x, y):
@@ -166,14 +167,55 @@ class CarliniWagnerL2:
         for _ in range(self.num_iter):
             delta.requires_grad = True
             output = self.model(x + delta)
-            loss = self.criterion(output, y)
-            loss.backward()
 
+            #  Calculating the modified loss to integrate the regularization factor c
+            classification_loss = self.criterion(output, y)
+            perturbation_loss = torch.norm(delta.view(delta.size(0), -1), p=2, dim=1).mean() # L2 norm of the perturbation
+            loss = classification_loss + self.c * perturbation_loss
+
+            loss.backward()
             grad = delta.grad.detach()
             grad_norm = torch.norm(grad.view(grad.size(0), -1), p=2, dim=1).view(-1, 1, 1, 1)
             delta.data += self.alpha * grad / grad_norm
             delta.data = torch.min(torch.max(delta.detach(), -x), 1 - x) # Projection onto the l2 ball
             delta.data = torch.clamp(delta.detach(), -self.eps, self.eps) # Projection onto the l2 ball
+            delta.grad.zero_()
+
+        return delta.detach()
+
+##################################################
+# Class to define CarliniWagner L infini
+##################################################
+class CarliniWagnerLinfinity:
+
+    def __init__(self, model, eps, alpha, num_iter, c=0.1):
+        self.model = model
+        self.eps = eps
+        self.alpha = alpha
+        self.num_iter = num_iter
+        self.c = c
+        self.criterion = nn.CrossEntropyLoss()
+
+    def compute(self, x, y):
+        # Construct CarliniWagnerL2 adversarial perturbation on the examples x
+        delta = torch.zeros_like(x, requires_grad=True)
+
+        for _ in range(self.num_iter):
+            self.model.zero_grad()
+            delta.requires_grad = True
+            output = self.model(x + delta)
+
+            # Calculating the modified loss to integrate the regularization factor c
+            classification_loss = self.criterion(output, y)
+            perturbation_loss = torch.norm(delta.view(delta.size(0), -1), p=float('inf')).mean() # infinity norm of the perturbation
+            loss = classification_loss + self.c * perturbation_loss
+
+            loss.backward()
+            grad = delta.grad.detach()
+
+            delta.data += self.alpha * grad.sign()
+            delta.data = torch.clamp(delta, -self.eps, self.eps)
+            delta.data = torch.clamp(x + delta, 0, 1) - x
             delta.grad.zero_()
 
         return delta.detach()

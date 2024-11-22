@@ -115,20 +115,21 @@ def run_experiments(config, model, criterion, optimizer, train_loader, test_load
         if attack_conf['type'] != 'normal' and (attack_type == 'all' or attack_conf['type'] == attack_type):
             attack_class = getattr(Model, attack_conf['attack_class'])
 
+            # Retrieve alpha, num_iter, and c for the current attack
+            alpha = attack_conf.get('alpha', config['adversarial_training'].get('alpha'))
+            num_iter = attack_conf.get('num_iter', config['adversarial_training'].get('num_iter'))
+            c = attack_conf.get('c', None)  # Default to None if not applicable
+
             for eps in attack_conf['epsilons']:
                 attack_name = f"{attack_conf['type']}_eps_{eps}"
-
-                # Initialize alpha and num_iter values for the current attack
-                alpha = attack_conf.get('alpha', config['adversarial_training']['alpha'])
-                num_iter = attack_conf.get('num_iter', config['adversarial_training']['num_iter'])
 
                 # Handle attack initialization based on the type
                 if attack_conf['type'] == 'fgsm':
                     attack = attack_class(model, eps)
                 elif attack_conf['type'] in ['pgd', 'pgd_l2']:
                     attack = attack_class(model, eps, alpha, num_iter)
-                elif attack_conf['type'] == 'cw_l2':
-                    attack = attack_class(model, eps, alpha, num_iter)
+                elif attack_conf['type'] in ['cw_l2', 'cw_linf']:
+                    attack = attack_class(model, eps, alpha, num_iter, c)
                 else:
                     raise ValueError(f"Type of attack not supported : {attack_conf['type']}")
 

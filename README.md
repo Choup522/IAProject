@@ -79,7 +79,6 @@ The Training.py file contains the code to train the model and evaluate its accur
 
 The training and test results are saved in a JSON file (results.json).
 
-
 ### Running Specific Parts of the Code
 
 You can run specific parts of the code, such as training a model without attacks or with a specific type of attack (e.g., PGD), by using command-line arguments:  
@@ -94,3 +93,9 @@ To train with all attacks:
 ```python Main.py --attack all```
 
 ## Results
+
+You can view the detailed results and visualizations in the `DisplayResults.ipynb` notebook.
+
+[View DisplayResults.ipynb](DisplayResults.ipynb)
+
+

@@ -5,14 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c4fbe487-f8c2-4da5-9e76-27a2376c2fd9" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/DisplayResults.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Training.py" beforeDir="false" afterPath="$PROJECT_DIR$/Training.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Model.py" beforeDir="false" afterPath="$PROJECT_DIR$/Model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/execution_times.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/results.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/results_test.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/outputs/results_train.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/FGSM_Training/execution_times.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/FGSM_Training/results.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/FGSM_Training/results_test.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/FGSM_Training/results_train.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/Normal_training/execution_times.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/Normal_training/results.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/Normal_training/results_test.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/Normal_training/results_train.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/PGD_L2_training/execution_times.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/PGD_L2_training/results.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/PGD_L2_training/results_test.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/PGD_L2_training/results_train.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/PGD_training/execution_times.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/PGD_training/results.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/PGD_training/results_test.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/outputs/PGD_training/results_train.csv" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +37,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="Jupyter Notebook" />
       </list>
     </option>
   </component>
@@ -46,6 +61,7 @@
     &quot;Python.Main.executor&quot;: &quot;Run&quot;,
     &quot;Python.Model.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/benjamin/Documents/GitHub/IAProject&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -85,8 +101,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-PY-242.23726.102" />
-        <option value="bundled-python-sdk-5e1850174b45-399fe30bd8c1-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-242.23726.102" />
+        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-PY-243.21565.199" />
+        <option value="bundled-python-sdk-cab1f2013843-4ae2d6a61b08-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.21565.199" />
       </set>
     </attachedChunks>
   </component>
@@ -105,7 +121,16 @@
       <workItem from="1729081541315" duration="2741000" />
       <workItem from="1730284537808" duration="6515000" />
       <workItem from="1730297726835" duration="26331000" />
-      <workItem from="1730641464456" duration="37199000" />
+      <workItem from="1730641464456" duration="37430000" />
+      <workItem from="1731082216267" duration="31735000" />
+      <workItem from="1731449059499" duration="16646000" />
+      <workItem from="1731773261234" duration="82000" />
+      <workItem from="1731773407136" duration="13296000" />
+      <workItem from="1731849314067" duration="10000" />
+      <workItem from="1731849441735" duration="8713000" />
+      <workItem from="1731914107965" duration="12806000" />
+      <workItem from="1732000932394" duration="32275000" />
+      <workItem from="1732267161912" duration="10563000" />
     </task>
     <servers />
   </component>
