@@ -98,4 +98,6 @@ You can view the detailed results and visualizations in the `DisplayResults.ipyn
 
 [View DisplayResults.ipynb](DisplayResults.ipynb)
 
+[View ProjetIA_Adversarial.pptx](ProjetIA_Adversarial.pptx)
+
 
