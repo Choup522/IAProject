@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c4fbe487-f8c2-4da5-9e76-27a2376c2fd9" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DisplayResults.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/DisplayResults.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config.yaml" afterDir="false" />
-    </list>
+    <list default="true" id="c4fbe487-f8c2-4da5-9e76-27a2376c2fd9" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -82,7 +78,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-0e3be3396995-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23339.19" />
+        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-PY-243.21565.199" />
+        <option value="bundled-python-sdk-cab1f2013843-4ae2d6a61b08-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.21565.199" />
       </set>
     </attachedChunks>
   </component>
@@ -113,11 +110,18 @@
       <workItem from="1732267161912" duration="17071000" />
       <workItem from="1732461912634" duration="13798000" />
       <workItem from="1732541592068" duration="5000" />
+      <workItem from="1732564424216" duration="1190000" />
+      <workItem from="1732872751578" duration="13640000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="dependencySupport" implementationName="executable:docker" />
+    <option featureType="dependencySupport" implementationName="executable:kubectl" />
+    <option featureType="dependencySupport" implementationName="python:pyspark" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
