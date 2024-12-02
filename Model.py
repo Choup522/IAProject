@@ -41,6 +41,17 @@ class LipschitzConvModel(ConvModel):
         # Forward pass normal
         return super(LipschitzConvModel, self).forward(x)
 
+    def apply_lipschitz_constraint(self):
+        for layer in self.modules():
+            if isinstance(layer, (nn.Conv2d, nn.Linear)):  # Apply constraint to specific layers
+                weight = layer.weight
+                # Compute the norm of the weights
+                weight_norm = torch.norm(weight.view(weight.size(0), -1), p=2, dim=1)
+                # Scale the weights if the norm exceeds the Lipschitz constant
+                scaling_factor = torch.clamp(weight_norm / self.lipschitz_constant, min=1.0)
+                weight = weight / scaling_factor.view(-1, *([1] * (weight.dim() - 1)))
+                layer.weight.data = weight
+
 ##################################################
 # Class to define a Randomized ConvModel
 ##################################################

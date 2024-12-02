@@ -73,6 +73,10 @@ class Training:
 
                 self.optimizer.step()
 
+                # Apply Lipschitz constraint on weights
+                if isinstance(self.model, Model.LipschitzConvModel):
+                    self.model.apply_lipschitz_constraint()
+
                 valid_loss += loss.item() * imgs.size(0)
 
                 # Calculate accuracy during training
